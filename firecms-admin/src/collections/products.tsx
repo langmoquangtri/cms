@@ -1,149 +1,202 @@
-import { buildCollection, buildProperty, EntityReference } from "@firecms/core";
-
-export type Product = {
+import {
+    buildCollection,
+    EntityReference,
+  } from '@firecms/core';
+  
+  export type Product = {
     name: string;
-    price: number;
-    status: string;
-    published: boolean;
-    related_products: EntityReference[];
+    slug: string;
+    sku: string;
+  
+    category?: EntityReference;
+  
     main_image: string;
-    tags: string[];
-    description: string;
-    categories: string[];
-    publisher: {
-        name: string;
-        external_id: string;
-    },
-    metadata: object,
-    expires_on: Date
-}
-
-export const productsCollection = buildCollection<Product>({
-    name: "Products",
-    singularName: "Product",
-    id: "products",
-    path: "products",
-    icon: "LocalGroceryStore",
-    group: "E-commerce",
-    permissions: ({ authController, user }) => ({
-        read: true,
-        edit: true,
-        create: true,
-        delete: true
+    images: string[];
+  
+    reference_price?: number;
+    material: string;
+    dimensions: string;
+  
+    short_description: string;
+    content: string;
+  
+    status: 'draft' | 'published' | 'hidden';
+    featured: boolean;
+    sort_order: number;
+  
+    seo_title: string;
+    seo_description: string;
+  
+    created_at: Date;
+    updated_at: Date;
+  };
+  
+  export const productsCollection = buildCollection<Product>({
+    name: 'Sản phẩm',
+    singularName: 'Sản phẩm',
+    id: 'products',
+    path: 'products',
+    group: 'Nội dung website',
+  
+    permissions: () => ({
+      read: true,
+      edit: true,
+      create: true,
+      delete: true,
     }),
+  
     properties: {
-        name: {
-            name: "Name",
-            validation: { required: true },
-            dataType: "string"
+      name: {
+        name: 'Tên sản phẩm',
+        dataType: 'string',
+        validation: {
+          required: true,
         },
-        price: {
-            name: "Price",
-            validation: {
-                required: true,
-                requiredMessage: "You must set a price between 0 and 1000",
-                min: 0,
-                max: 1000
-            },
-            description: "Price with range validation",
-            dataType: "number"
+        columnWidth: 280,
+      },
+  
+      slug: {
+        name: 'Slug',
+        dataType: 'string',
+        description:
+          'Đường dẫn URL. Ví dụ: lang-mo-da-xanh-thanh-hoa',
+        validation: {
+          required: true,
         },
-        status: {
-            name: "Status",
-            validation: { required: true },
-            dataType: "string",
-            description: "Should this product be visible in the website",
-            longDescription: "Example of a long description hidden under a tooltip. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin quis bibendum turpis. Sed scelerisque ligula nec nisi pellentesque, eget viverra lorem facilisis. Praesent a lectus ac ipsum tincidunt posuere vitae non risus. In eu feugiat massa. Sed eu est non velit facilisis facilisis vitae eget ante. Nunc ut malesuada erat. Nullam sagittis bibendum porta. Maecenas vitae interdum sapien, ut aliquet risus. Donec aliquet, turpis finibus aliquet bibendum, tellus dui porttitor quam, quis pellentesque tellus libero non urna. Vestibulum maximus pharetra congue. Suspendisse aliquam congue quam, sed bibendum turpis. Aliquam eu enim ligula. Nam vel magna ut urna cursus sagittis. Suspendisse a nisi ac justo ornare tempor vel eu eros.",
-            enumValues: {
-                private: "Private",
-                public: "Public"
-            }
+        columnWidth: 250,
+      },
+  
+      sku: {
+        name: 'Mã sản phẩm',
+        dataType: 'string',
+        description: 'Ví dụ: LM001',
+        columnWidth: 150,
+      },
+  
+      category: {
+        name: 'Danh mục',
+        dataType: 'reference',
+        path: 'categories',
+        description: 'Chọn danh mục sản phẩm',
+      },
+  
+      main_image: {
+        name: 'Ảnh đại diện',
+        dataType: 'string',
+        storage: {
+          storagePath: 'products/main',
+          acceptedFiles: ['image/*'],
         },
-        published: ({ values }) => buildProperty({
-            name: "Published",
-            dataType: "boolean",
-            columnWidth: 100,
-            disabled: values.status === "public"
-                ? false
-                : {
-                    clearOnDisabled: true,
-                    disabledMessage: "Status must be public in order to enable this the published flag"
-                }
-
-        }),
-        related_products: {
-            dataType: "array",
-            name: "Related products",
-            description: "Reference to self",
-            of: {
-                dataType: "reference",
-                path: "products"
-            }
+      },
+  
+      images: {
+        name: 'Thư viện ảnh',
+        dataType: 'array',
+        description: 'Tải lên nhiều ảnh của sản phẩm',
+        of: {
+          dataType: 'string',
+          storage: {
+            storagePath: 'products/gallery',
+            acceptedFiles: ['image/*'],
+          },
         },
-        main_image: buildProperty({ // The `buildProperty` method is a utility function used for type checking
-            name: "Image",
-            dataType: "string",
-            storage: {
-                storagePath: "images",
-                acceptedFiles: ["image/*"]
-            }
-        }),
-        tags: {
-            name: "Tags",
-            description: "Example of generic array",
-            validation: { required: true },
-            dataType: "array",
-            of: {
-                dataType: "string"
-            }
+      },
+  
+      reference_price: {
+        name: 'Giá tham khảo',
+        dataType: 'number',
+        description:
+          'Có thể để trống nếu sản phẩm báo giá theo yêu cầu',
+        validation: {
+          min: 0,
         },
-        description: {
-            name: "Description",
-            description: "This is the description of the product",
-            multiline: true,
-            longDescription: "Example of a long description hidden under a tooltip. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin quis bibendum turpis. Sed scelerisque ligula nec nisi pellentesque, eget viverra lorem facilisis. Praesent a lectus ac ipsum tincidunt posuere vitae non risus. In eu feugiat massa. Sed eu est non velit facilisis facilisis vitae eget ante. Nunc ut malesuada erat. Nullam sagittis bibendum porta. Maecenas vitae interdum sapien, ut aliquet risus. Donec aliquet, turpis finibus aliquet bibendum, tellus dui porttitor quam, quis pellentesque tellus libero non urna. Vestibulum maximus pharetra congue. Suspendisse aliquam congue quam, sed bibendum turpis. Aliquam eu enim ligula. Nam vel magna ut urna cursus sagittis. Suspendisse a nisi ac justo ornare tempor vel eu eros.",
-            dataType: "string",
-            columnWidth: 300
+      },
+  
+      material: {
+        name: 'Chất liệu đá',
+        dataType: 'string',
+        description:
+          'Ví dụ: Đá xanh Thanh Hóa, đá xanh rêu, granite...',
+        columnWidth: 220,
+      },
+  
+      dimensions: {
+        name: 'Kích thước',
+        dataType: 'string',
+        description: 'Ví dụ: 81 × 127 cm',
+        columnWidth: 180,
+      },
+  
+      short_description: {
+        name: 'Mô tả ngắn',
+        dataType: 'string',
+        multiline: true,
+        columnWidth: 320,
+      },
+  
+      content: {
+        name: 'Nội dung chi tiết',
+        dataType: 'string',
+        markdown: true,
+        description:
+          'Nội dung chi tiết hiển thị trên trang sản phẩm',
+      },
+  
+      status: {
+        name: 'Trạng thái',
+        dataType: 'string',
+        validation: {
+          required: true,
         },
-        categories: {
-            name: "Categories",
-            validation: { required: true },
-            dataType: "array",
-            of: {
-                dataType: "string",
-                enumValues: {
-                    electronics: "Electronics",
-                    books: "Books",
-                    furniture: "Furniture",
-                    clothing: "Clothing",
-                    food: "Food",
-                    footwear: "Footwear",
-                }
-            }
+        enumValues: {
+          draft: 'Bản nháp',
+          published: 'Đã xuất bản',
+          hidden: 'Đã ẩn',
         },
-        publisher: {
-            name: "Publisher",
-            description: "This is an example of a map property",
-            dataType: "map",
-            properties: {
-                name: {
-                    name: "Name",
-                    dataType: "string"
-                },
-                external_id: {
-                    name: "External id",
-                    dataType: "string"
-                }
-            }
+        defaultValue: 'draft',
+      },
+  
+      featured: {
+        name: 'Sản phẩm nổi bật',
+        dataType: 'boolean',
+        defaultValue: false,
+      },
+  
+      sort_order: {
+        name: 'Thứ tự hiển thị',
+        dataType: 'number',
+        defaultValue: 0,
+        validation: {
+          min: 0,
         },
-        metadata: {
-            name: "Metadata",
-            dataType: "map",
-            keyValue: true
-        },
-        expires_on: {
-            name: "Expires on",
-            dataType: "date"
-        }
-    }
-});
+      },
+  
+      seo_title: {
+        name: 'SEO Title',
+        dataType: 'string',
+        description: 'Tiêu đề hiển thị trên Google',
+        columnWidth: 280,
+      },
+  
+      seo_description: {
+        name: 'SEO Description',
+        dataType: 'string',
+        multiline: true,
+        description:
+          'Mô tả ngắn dành cho công cụ tìm kiếm',
+        columnWidth: 320,
+      },
+  
+      created_at: {
+        name: 'Ngày tạo',
+        dataType: 'date',
+        autoValue: 'on_create',
+      },
+  
+      updated_at: {
+        name: 'Cập nhật lần cuối',
+        dataType: 'date',
+        autoValue: 'on_update',
+      },
+    },
+  });
