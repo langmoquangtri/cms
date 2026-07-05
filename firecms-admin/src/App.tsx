@@ -37,22 +37,21 @@ import { projectsCollection } from './collections/projects';
 
 import { firebaseConfig } from './firebase_config';
 
-const ADMIN_EMAIL = 'langmoquantri@gmail.com';
-
 function App() {
+  /**
+   * Cho phép mọi tài khoản đã đăng nhập thành công
+   * bằng Firebase Email/Password truy cập CMS.
+   */
   const myAuthenticator: Authenticator<FirebaseUserWrapper> = useCallback(
     async ({ user }) => {
-      const email = user?.email?.toLowerCase().trim();
-
-      if (!email) {
-        return false;
-      }
-
-      return email === ADMIN_EMAIL;
+      return Boolean(user?.email);
     },
     []
   );
 
+  /**
+   * Các collection hiển thị trong CMS
+   */
   const collections = useMemo(
     () => [
       categoriesCollection,
@@ -62,6 +61,9 @@ function App() {
     []
   );
 
+  /**
+   * Khởi tạo Firebase
+   */
   const {
     firebaseApp,
     firebaseConfigLoading,
@@ -70,27 +72,48 @@ function App() {
     firebaseConfig,
   });
 
+  /**
+   * Dark / Light mode
+   */
   const modeController = useBuildModeController();
 
+  /**
+   * Chỉ đăng nhập bằng Email / Password
+   */
   const signInOptions: FirebaseSignInProvider[] = ['password'];
 
+  /**
+   * Firebase Authentication
+   */
   const authController: FirebaseAuthController =
     useFirebaseAuthController({
       firebaseApp,
       signInOptions,
     });
 
+  /**
+   * Lưu preference của người dùng
+   */
   const userConfigPersistence =
     useBuildLocalConfigurationPersistence();
 
+  /**
+   * Kết nối Firestore
+   */
   const firestoreDelegate = useFirestoreDelegate({
     firebaseApp,
   });
 
+  /**
+   * Kết nối Firebase Storage
+   */
   const storageSource = useFirebaseStorageSource({
     firebaseApp,
   });
 
+  /**
+   * Kiểm tra trạng thái đăng nhập
+   */
   const {
     authLoading,
     canAccessMainView,
@@ -102,6 +125,9 @@ function App() {
     storageSource,
   });
 
+  /**
+   * Navigation CMS
+   */
   const navigationController = useBuildNavigationController({
     disabled: authLoading,
     collections,
@@ -109,10 +135,16 @@ function App() {
     dataSourceDelegate: firestoreDelegate,
   });
 
+  /**
+   * Firebase đang khởi tạo
+   */
   if (firebaseConfigLoading) {
     return <CircularProgressCenter />;
   }
 
+  /**
+   * Firebase config lỗi
+   */
   if (configError) {
     return (
       <CenteredView>
@@ -137,6 +169,9 @@ function App() {
     );
   }
 
+  /**
+   * Firebase App không khởi tạo được
+   */
   if (!firebaseApp) {
     return (
       <CenteredView>
@@ -147,6 +182,9 @@ function App() {
     );
   }
 
+  /**
+   * Giao diện CMS
+   */
   return (
     <FireCMSi18nProvider>
       <SnackbarProvider>
