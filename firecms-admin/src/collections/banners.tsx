@@ -51,6 +51,7 @@ export const bannersCollection = buildCollection<Banner>({
       storage: {
         storagePath: "banners/desktop",
         acceptedFiles: ["image/*"],
+      storeUrl: true,
       },
     },
 
@@ -60,6 +61,7 @@ export const bannersCollection = buildCollection<Banner>({
       storage: {
         storagePath: "banners/mobile",
         acceptedFiles: ["image/*"],
+      storeUrl: true,
       },
     },
 

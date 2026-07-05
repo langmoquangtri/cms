@@ -24,7 +24,6 @@ import {
   FirebaseSignInProvider,
   FirebaseUserWrapper,
   useFirebaseAuthController,
-  useFirebaseStorageSource,
   useFirestoreDelegate,
   useInitialiseFirebase,
 } from "@firecms/firebase";
@@ -37,6 +36,15 @@ import { postsCollection } from "./collections/posts";
 import { productsCollection } from "./collections/products";
 import { projectsCollection } from "./collections/projects";
 import { firebaseConfig } from "./firebase_config";
+import { buildR2StorageSource } from "./storage/r2_storage_source";
+
+const R2_API_BASE_URL = import.meta.env.VITE_R2_API_BASE_URL as
+  | string
+  | undefined;
+
+const R2_PUBLIC_BASE_URL = import.meta.env.VITE_R2_PUBLIC_BASE_URL as
+  | string
+  | undefined;
 
 function App() {
   const authenticator: Authenticator<FirebaseUserWrapper> = useCallback(
@@ -75,9 +83,15 @@ function App() {
     firebaseApp,
   });
 
-  const storageSource = useFirebaseStorageSource({
-    firebaseApp,
-  });
+  const storageSource = useMemo(
+    () =>
+      buildR2StorageSource({
+        apiBaseUrl: R2_API_BASE_URL ?? "",
+        publicBaseUrl: R2_PUBLIC_BASE_URL ?? "",
+        getAuthToken: () => authController.getAuthToken(),
+      }),
+    [authController]
+  );
 
   const { authLoading, canAccessMainView, notAllowedError } =
     useValidateAuthenticator({
@@ -94,6 +108,11 @@ function App() {
     dataSourceDelegate: firestoreDelegate,
   });
 
+  const r2ConfigError =
+    !R2_API_BASE_URL || !R2_PUBLIC_BASE_URL
+      ? "Thiếu VITE_R2_API_BASE_URL hoặc VITE_R2_PUBLIC_BASE_URL trong file .env"
+      : null;
+
   if (firebaseConfigLoading) {
     return <CircularProgressCenter />;
   }
@@ -105,6 +124,19 @@ function App() {
           <h2>Lỗi cấu hình Firebase</h2>
           <pre style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
             {String(configError)}
+          </pre>
+        </div>
+      </CenteredView>
+    );
+  }
+
+  if (r2ConfigError) {
+    return (
+      <CenteredView>
+        <div style={{ padding: 24, maxWidth: 760 }}>
+          <h2>Lỗi cấu hình Cloudflare R2</h2>
+          <pre style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
+            {r2ConfigError}
           </pre>
         </div>
       </CenteredView>

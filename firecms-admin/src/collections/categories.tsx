@@ -54,6 +54,7 @@ export const categoriesCollection = buildCollection<Category>({
       storage: {
         storagePath: "categories",
         acceptedFiles: ["image/*"],
+      storeUrl: true,
       },
     },
 

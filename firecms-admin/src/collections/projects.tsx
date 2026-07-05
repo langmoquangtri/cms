@@ -68,6 +68,7 @@ export const projectsCollection = buildCollection<Project>({
       storage: {
         storagePath: "projects/main",
         acceptedFiles: ["image/*"],
+      storeUrl: true,
       },
     },
 
@@ -80,6 +81,7 @@ export const projectsCollection = buildCollection<Project>({
         storage: {
           storagePath: "projects/gallery",
           acceptedFiles: ["image/*"],
+        storeUrl: true,
         },
       },
     },

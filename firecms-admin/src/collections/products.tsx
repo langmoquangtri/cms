@@ -71,6 +71,7 @@ export const productsCollection = buildCollection<Product>({
       storage: {
         storagePath: "products/main",
         acceptedFiles: ["image/*"],
+      storeUrl: true,
       },
     },
 
@@ -83,6 +84,7 @@ export const productsCollection = buildCollection<Product>({
         storage: {
           storagePath: "products/gallery",
           acceptedFiles: ["image/*"],
+        storeUrl: true,
         },
       },
     },

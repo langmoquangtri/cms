@@ -60,6 +60,7 @@ export const postsCollection = buildCollection<Post>({
       storage: {
         storagePath: "posts/cover",
         acceptedFiles: ["image/*"],
+      storeUrl: true,
       },
     },
 
