@@ -1,19 +1,21 @@
-import { defineConfig } from "vite"
-import react from "@vitejs/plugin-react"
-import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-    esbuild: {
-        logOverride: { "this-is-undefined-in-esm": "silent" }
+  esbuild: {
+    logOverride: {
+      'this-is-undefined-in-esm': 'silent',
     },
-    build: {
-        outDir: "./build",
-        target: "ESNEXT",
-        sourcemap: true
-    },
-    optimizeDeps: { include: ["react/jsx-runtime"] },
-    plugins: [
-        react({}),
-        tailwindcss()
-    ]
-})
+  },
+
+  plugins: [
+    react(),
+    tailwindcss(),
+  ],
+
+  build: {
+    outDir: './build',
+    target: 'ESNEXT',
+  },
+});
