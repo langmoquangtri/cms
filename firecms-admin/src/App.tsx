@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from "react";
 
 import {
   AppBar,
@@ -16,7 +16,7 @@ import {
   useBuildModeController,
   useBuildNavigationController,
   useValidateAuthenticator,
-} from '@firecms/core';
+} from "@firecms/core";
 
 import {
   FirebaseAuthController,
@@ -27,107 +27,66 @@ import {
   useFirebaseStorageSource,
   useFirestoreDelegate,
   useInitialiseFirebase,
-} from '@firecms/firebase';
+} from "@firecms/firebase";
 
-import { CenteredView } from '@firecms/ui';
+import { CenteredView } from "@firecms/ui";
 
-import { categoriesCollection } from './collections/categories';
-import { productsCollection } from './collections/products';
-import { projectsCollection } from './collections/projects';
-
-import { firebaseConfig } from './firebase_config';
+import { bannersCollection } from "./collections/banners";
+import { categoriesCollection } from "./collections/categories";
+import { postsCollection } from "./collections/posts";
+import { productsCollection } from "./collections/products";
+import { projectsCollection } from "./collections/projects";
+import { firebaseConfig } from "./firebase_config";
 
 function App() {
-  /**
-   * Cho phép mọi tài khoản đã đăng nhập thành công
-   * bằng Firebase Email/Password truy cập CMS.
-   */
-  const myAuthenticator: Authenticator<FirebaseUserWrapper> = useCallback(
-    async ({ user }) => {
-      return Boolean(user?.email);
-    },
+  const authenticator: Authenticator<FirebaseUserWrapper> = useCallback(
+    async ({ user }) => Boolean(user?.email),
     []
   );
 
-  /**
-   * Các collection hiển thị trong CMS
-   */
   const collections = useMemo(
     () => [
       categoriesCollection,
       productsCollection,
       projectsCollection,
+      postsCollection,
+      bannersCollection,
     ],
     []
   );
 
-  /**
-   * Khởi tạo Firebase
-   */
-  const {
-    firebaseApp,
-    firebaseConfigLoading,
-    configError,
-  } = useInitialiseFirebase({
-    firebaseConfig,
-  });
-
-  /**
-   * Dark / Light mode
-   */
-  const modeController = useBuildModeController();
-
-  /**
-   * Chỉ đăng nhập bằng Email / Password
-   */
-  const signInOptions: FirebaseSignInProvider[] = ['password'];
-
-  /**
-   * Firebase Authentication
-   */
-  const authController: FirebaseAuthController =
-    useFirebaseAuthController({
-      firebaseApp,
-      signInOptions,
+  const { firebaseApp, firebaseConfigLoading, configError } =
+    useInitialiseFirebase({
+      firebaseConfig,
     });
 
-  /**
-   * Lưu preference của người dùng
-   */
-  const userConfigPersistence =
-    useBuildLocalConfigurationPersistence();
+  const modeController = useBuildModeController();
 
-  /**
-   * Kết nối Firestore
-   */
+  const signInOptions: FirebaseSignInProvider[] = ["password"];
+
+  const authController: FirebaseAuthController = useFirebaseAuthController({
+    firebaseApp,
+    signInOptions,
+  });
+
+  const userConfigPersistence = useBuildLocalConfigurationPersistence();
+
   const firestoreDelegate = useFirestoreDelegate({
     firebaseApp,
   });
 
-  /**
-   * Kết nối Firebase Storage
-   */
   const storageSource = useFirebaseStorageSource({
     firebaseApp,
   });
 
-  /**
-   * Kiểm tra trạng thái đăng nhập
-   */
-  const {
-    authLoading,
-    canAccessMainView,
-    notAllowedError,
-  } = useValidateAuthenticator({
-    authController,
-    authenticator: myAuthenticator,
-    dataSourceDelegate: firestoreDelegate,
-    storageSource,
-  });
+  const { authLoading, canAccessMainView, notAllowedError } =
+    useValidateAuthenticator({
+      authController,
+      authenticator,
+      dataSourceDelegate: firestoreDelegate,
+      storageSource,
+    });
 
-  /**
-   * Navigation CMS
-   */
   const navigationController = useBuildNavigationController({
     disabled: authLoading,
     collections,
@@ -135,33 +94,16 @@ function App() {
     dataSourceDelegate: firestoreDelegate,
   });
 
-  /**
-   * Firebase đang khởi tạo
-   */
   if (firebaseConfigLoading) {
     return <CircularProgressCenter />;
   }
 
-  /**
-   * Firebase config lỗi
-   */
   if (configError) {
     return (
       <CenteredView>
-        <div
-          style={{
-            padding: 24,
-            maxWidth: 700,
-          }}
-        >
+        <div style={{ padding: 24, maxWidth: 760 }}>
           <h2>Lỗi cấu hình Firebase</h2>
-
-          <pre
-            style={{
-              whiteSpace: 'pre-wrap',
-              wordBreak: 'break-word',
-            }}
-          >
+          <pre style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
             {String(configError)}
           </pre>
         </div>
@@ -169,22 +111,14 @@ function App() {
     );
   }
 
-  /**
-   * Firebase App không khởi tạo được
-   */
   if (!firebaseApp) {
     return (
       <CenteredView>
-        <div style={{ padding: 24 }}>
-          Không thể khởi tạo Firebase.
-        </div>
+        <div style={{ padding: 24 }}>Không thể khởi tạo Firebase.</div>
       </CenteredView>
     );
   }
 
-  /**
-   * Giao diện CMS
-   */
   return (
     <FireCMSi18nProvider>
       <SnackbarProvider>
@@ -198,9 +132,7 @@ function App() {
           >
             {({ loading }) => {
               if (loading || authLoading) {
-                return (
-                  <CircularProgressCenter size="large" />
-                );
+                return <CircularProgressCenter size="large" />;
               }
 
               if (!canAccessMainView) {

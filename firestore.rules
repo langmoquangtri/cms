@@ -1,0 +1,39 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    match /categories/{documentId} {
+      allow read: if signedIn() || resource.data.active == true;
+      allow write: if signedIn();
+    }
+
+    match /products/{documentId} {
+      allow read: if signedIn() || resource.data.status == "published";
+      allow write: if signedIn();
+    }
+
+    match /projects/{documentId} {
+      allow read: if signedIn() || resource.data.status == "published";
+      allow write: if signedIn();
+    }
+
+    match /posts/{documentId} {
+      allow read: if signedIn() || resource.data.status == "published";
+      allow write: if signedIn();
+    }
+
+    match /banners/{documentId} {
+      allow read: if signedIn() || resource.data.active == true;
+      allow write: if signedIn();
+    }
+
+    match /{document=**} {
+      allow read, write: if signedIn();
+    }
+  }
+}

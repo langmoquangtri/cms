@@ -1,29 +1,27 @@
 import { buildCollection } from "@firecms/core";
 
-export type Project = {
-  name: string;
+export type Post = {
+  title: string;
   slug: string;
-  location: string;
-  customer_name: string;
-  main_image: string;
-  images: string[];
-  short_description: string;
+  excerpt: string;
+  cover_image: string;
   content: string;
-  completed_date?: Date;
+  category: "knowledge" | "consulting" | "news" | "feng_shui";
+  author: string;
   status: "draft" | "published" | "hidden";
   featured: boolean;
-  sort_order: number;
+  published_at?: Date;
   seo_title: string;
   seo_description: string;
   created_at: Date;
   updated_at: Date;
 };
 
-export const projectsCollection = buildCollection<Project>({
-  name: "Công trình",
-  singularName: "Công trình",
-  id: "projects",
-  path: "projects",
+export const postsCollection = buildCollection<Post>({
+  name: "Bài viết",
+  singularName: "Bài viết",
+  id: "posts",
+  path: "posts",
   group: "Nội dung website",
 
   permissions: () => ({
@@ -34,73 +32,61 @@ export const projectsCollection = buildCollection<Project>({
   }),
 
   properties: {
-    name: {
-      name: "Tên công trình",
+    title: {
+      name: "Tiêu đề",
       dataType: "string",
       validation: { required: true },
-      columnWidth: 280,
+      columnWidth: 320,
     },
 
     slug: {
       name: "Slug",
       dataType: "string",
-      description: "Ví dụ: lang-mo-da-xanh-tai-ha-noi",
+      description: "Ví dụ: cach-chon-da-lam-lang-mo",
       validation: { required: true },
       columnWidth: 260,
     },
 
-    location: {
-      name: "Địa điểm",
-      dataType: "string",
-      description: "Ví dụ: Hà Nội, Thanh Hóa, Ninh Bình...",
-      columnWidth: 220,
-    },
-
-    customer_name: {
-      name: "Tên khách hàng",
-      dataType: "string",
-      description: "Có thể để trống nếu không muốn công khai",
-    },
-
-    main_image: {
-      name: "Ảnh đại diện",
-      dataType: "string",
-      storage: {
-        storagePath: "projects/main",
-        acceptedFiles: ["image/*"],
-      },
-    },
-
-    images: {
-      name: "Thư viện ảnh",
-      dataType: "array",
-      description: "Tải nhiều ảnh thực tế của công trình",
-      of: {
-        dataType: "string",
-        storage: {
-          storagePath: "projects/gallery",
-          acceptedFiles: ["image/*"],
-        },
-      },
-    },
-
-    short_description: {
+    excerpt: {
       name: "Mô tả ngắn",
       dataType: "string",
       multiline: true,
       columnWidth: 320,
     },
 
-    content: {
-      name: "Nội dung chi tiết",
+    cover_image: {
+      name: "Ảnh đại diện",
       dataType: "string",
-      markdown: true,
-      description: "Nội dung chi tiết của công trình",
+      storage: {
+        storagePath: "posts/cover",
+        acceptedFiles: ["image/*"],
+      },
     },
 
-    completed_date: {
-      name: "Ngày hoàn thiện",
-      dataType: "date",
+    content: {
+      name: "Nội dung bài viết",
+      dataType: "string",
+      markdown: true,
+      validation: { required: true },
+    },
+
+    category: {
+      name: "Chuyên mục",
+      dataType: "string",
+      validation: { required: true },
+      enumValues: {
+        knowledge: "Kiến thức",
+        consulting: "Tư vấn",
+        news: "Tin tức",
+        feng_shui: "Phong thủy",
+      },
+      defaultValue: "knowledge",
+    },
+
+    author: {
+      name: "Tác giả",
+      dataType: "string",
+      defaultValue: "Admin",
     },
 
     status: {
@@ -116,16 +102,14 @@ export const projectsCollection = buildCollection<Project>({
     },
 
     featured: {
-      name: "Công trình nổi bật",
+      name: "Bài viết nổi bật",
       dataType: "boolean",
       defaultValue: false,
     },
 
-    sort_order: {
-      name: "Thứ tự hiển thị",
-      dataType: "number",
-      defaultValue: 0,
-      validation: { min: 0 },
+    published_at: {
+      name: "Ngày xuất bản",
+      dataType: "date",
     },
 
     seo_title: {
