@@ -1,5 +1,6 @@
 import {
   DownloadConfig,
+  StorageListResult,
   StorageSource,
   UploadFileProps,
   UploadFileResult,
@@ -159,6 +160,21 @@ export function buildR2StorageSource({
         console.error("R2 getFile error:", error);
         return null;
       }
+    },
+
+    async deleteFile(_path: string, _bucket?: string): Promise<void> {
+      throw new Error("Worker R2 chưa hỗ trợ xoá file.");
+    },
+
+    async list(
+      _path: string,
+      _options?: {
+        bucket?: string;
+        maxResults?: number;
+        pageToken?: string;
+      }
+    ): Promise<StorageListResult> {
+      throw new Error("Worker R2 chưa hỗ trợ liệt kê file.");
     },
   };
 }
