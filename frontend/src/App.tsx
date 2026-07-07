@@ -27,6 +27,21 @@ import Header from "./components/Header";
 import { Banner, Category, Product, Project, Post, ViewType } from "./types";
 import { getBanners, getCategories, getProducts, getProjects, getPosts, saveContactMessage } from "./lib/firebase";
 
+function getYoutubeVideoId(url: string): string | null {
+  const match = url.match(
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/
+  );
+  return match ? match[1] : null;
+}
+
+function getYoutubeEmbedId(url?: string): string | null {
+  if (!url) return null;
+  const match = url.match(
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/
+  );
+  return match ? match[1] : null;
+}
+
 function parseLocation(): ViewType {
   const path = window.location.pathname;
   const searchParams = new URLSearchParams(window.location.search);
@@ -1150,6 +1165,23 @@ export default function App() {
                         Theo chuẩn thước lỗ ban âm phần, kích thước 30x40cm hay 40x60cm mang các cung đại cát phú quý, mang hưng thịnh cho con cháu dòng họ. Hãy kết hợp chạm nổi hoa văn sen đầm phong thủy để tối ưu may mắn, cát khí.
                       </p>
                     </div>
+
+                    {getYoutubeEmbedId(activeProduct.videoUrl) && (
+                      <div className="mt-6">
+                        <h4 className="font-serif font-bold text-sm text-stone-charcoal mb-2">Video Giới Thiệu</h4>
+                        <div className="aspect-video border border-bronze/30 rounded-xs overflow-hidden">
+                          <iframe
+                            src={`https://www.youtube-nocookie.com/embed/${getYoutubeEmbedId(activeProduct.videoUrl)}`}
+                            title={`Video giới thiệu ${activeProduct.name}`}
+                            className="w-full h-full"
+                            allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
+                            sandbox="allow-scripts allow-same-origin allow-presentation"
+                            referrerPolicy="strict-origin-when-cross-origin"
+                            allowFullScreen
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 

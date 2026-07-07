@@ -38,6 +38,7 @@ export interface Product {
   isFeatured: boolean;
   rating: number;
   inStock: boolean;
+  videoUrl?: string;
 }
 
 export interface Project {

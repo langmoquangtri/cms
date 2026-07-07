@@ -143,13 +143,20 @@ export async function getProducts(categoriesList: any[]) {
       const price = data.reference_price || 0;
       const priceStr = price > 0 ? `${price.toLocaleString("vi-VN")} đ` : "Liên hệ báo giá";
 
-      const specs = [
+      const fallbackSpecs = [
         { key: "Kích thước phổ biến", value: data.dimensions || "Theo kích thước yêu cầu" },
         { key: "Chất liệu", value: data.material || "Đá tự nhiên nguyên khối" },
         { key: "Công nghệ khắc", value: "Khắc CNC chìm sâu kết hợp đục tay thủ công chi tiết hoa văn" },
         { key: "Chất liệu phủ chữ", value: "Sơn vàng cao cấp chịu nhiệt hoặc mạ vàng lá 24K (theo yêu cầu)" },
         { key: "Thời gian hoàn thành", value: "3 - 5 ngày" }
       ];
+
+      const specs = Array.isArray(data.specifications) && data.specifications.length > 0
+        ? data.specifications.map((spec: { label?: string; value?: string }) => ({
+            key: spec.label || "",
+            value: spec.value || ""
+          }))
+        : fallbackSpecs;
 
       return {
         id: doc.id,
@@ -163,6 +170,7 @@ export async function getProducts(categoriesList: any[]) {
         shortDescription: data.short_description || "",
         description: data.content || "",
         specifications: specs,
+        videoUrl: data.video_url || undefined,
         features: [
           "Bề mặt phẳng tuyệt đối, độ bóng gương cực cao dễ dàng lau chùi vệ sinh.",
           "Độ cứng cao, chịu lực nén cực tốt, không nứt nẻ qua thời gian.",
