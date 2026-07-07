@@ -249,19 +249,19 @@ export const CategoryPreviewComponent: React.FC<{ values: CategoryValues }> = ({
 
 // FireCMS custom entity views configurations
 export const productPreviewView: EntityCustomView<any> = {
-  path: "preview",
+  key: "preview",
   name: "Xem trước (Trực quan)",
-  builder: ({ values }) => <ProductPreviewComponent values={values} />
+  Builder: ({ values }: { values: any }) => <ProductPreviewComponent values={values} />
 };
 
 export const projectPreviewView: EntityCustomView<any> = {
-  path: "preview",
+  key: "preview",
   name: "Xem trước (Trực quan)",
-  builder: ({ values }) => <ProjectPreviewComponent values={values} />
+  Builder: ({ values }: { values: any }) => <ProjectPreviewComponent values={values} />
 };
 
 export const categoryPreviewView: EntityCustomView<any> = {
-  path: "preview",
+  key: "preview",
   name: "Xem trước (Trực quan)",
-  builder: ({ values }) => <CategoryPreviewComponent values={values} />
+  Builder: ({ values }: { values: any }) => <CategoryPreviewComponent values={values} />
 };

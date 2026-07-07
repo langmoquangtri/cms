@@ -156,5 +156,5 @@ export const projectsCollection = buildCollection<Project>({
       autoValue: "on_update",
     },
   },
-  views: [projectPreviewView],
+  entityViews: [projectPreviewView],
 });

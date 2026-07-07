@@ -177,5 +177,5 @@ export const productsCollection = buildCollection<Product>({
       autoValue: "on_update",
     },
   },
-  views: [productPreviewView],
+  entityViews: [productPreviewView],
 });

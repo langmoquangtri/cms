@@ -84,5 +84,5 @@ export const categoriesCollection = buildCollection<Category>({
       autoValue: "on_update",
     },
   },
-  views: [categoryPreviewView],
+  entityViews: [categoryPreviewView],
 });
