@@ -1,5 +1,5 @@
 import React from "react";
-import { EntityCustomView } from "@firecms/core";
+import { EntityCustomView, EntityCustomViewParams } from "@firecms/core";
 
 // Interface mimicking the actual values
 interface ProductValues {
@@ -251,17 +251,23 @@ export const CategoryPreviewComponent: React.FC<{ values: CategoryValues }> = ({
 export const productPreviewView: EntityCustomView<any> = {
   key: "preview",
   name: "Xem trước (Trực quan)",
-  Builder: ({ values }: { values: any }) => <ProductPreviewComponent values={values} />
+  Builder: ({ modifiedValues, entity }: EntityCustomViewParams<any>) => (
+    <ProductPreviewComponent values={modifiedValues ?? entity?.values ?? {}} />
+  )
 };
 
 export const projectPreviewView: EntityCustomView<any> = {
   key: "preview",
   name: "Xem trước (Trực quan)",
-  Builder: ({ values }: { values: any }) => <ProjectPreviewComponent values={values} />
+  Builder: ({ modifiedValues, entity }: EntityCustomViewParams<any>) => (
+    <ProjectPreviewComponent values={modifiedValues ?? entity?.values ?? {}} />
+  )
 };
 
 export const categoryPreviewView: EntityCustomView<any> = {
   key: "preview",
   name: "Xem trước (Trực quan)",
-  Builder: ({ values }: { values: any }) => <CategoryPreviewComponent values={values} />
+  Builder: ({ modifiedValues, entity }: EntityCustomViewParams<any>) => (
+    <CategoryPreviewComponent values={modifiedValues ?? entity?.values ?? {}} />
+  )
 };
