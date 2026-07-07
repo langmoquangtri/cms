@@ -1,4 +1,5 @@
 import { buildCollection } from "@firecms/core";
+import { categoryPreviewView } from "./previews/LivePreview";
 
 export type Category = {
   name: string;
@@ -83,4 +84,5 @@ export const categoriesCollection = buildCollection<Category>({
       autoValue: "on_update",
     },
   },
+  views: [categoryPreviewView],
 });

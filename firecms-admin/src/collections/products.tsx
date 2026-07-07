@@ -1,4 +1,5 @@
 import { buildCollection, EntityReference } from "@firecms/core";
+import { productPreviewView } from "./previews/LivePreview";
 
 export type Product = {
   name: string;
@@ -176,4 +177,5 @@ export const productsCollection = buildCollection<Product>({
       autoValue: "on_update",
     },
   },
+  views: [productPreviewView],
 });

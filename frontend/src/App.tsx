@@ -20,7 +20,8 @@ import {
   BookOpen,
   Calendar,
   User,
-  Heart
+  Heart,
+  Tag
 } from "lucide-react";
 import Header from "./components/Header";
 import { Banner, Category, Product, Project, Post, ViewType } from "./types";
@@ -91,6 +92,8 @@ export default function App() {
   // Search & Filter
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [priceFilter, setPriceFilter] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<string>("default");
 
   // Contact Form State
   const [contactName, setContactName] = useState("");
@@ -298,6 +301,43 @@ export default function App() {
         p.categoryName.toLowerCase().includes(q)
       );
     }
+    
+    // Filter by price range
+    if (priceFilter !== "all") {
+      if (priceFilter === "under-10m") {
+        result = result.filter(p => p.price > 0 && p.price < 10000000);
+      } else if (priceFilter === "10m-20m") {
+        result = result.filter(p => p.price >= 10000000 && p.price <= 20000000);
+      } else if (priceFilter === "20m-50m") {
+        result = result.filter(p => p.price > 20000000 && p.price <= 50000000);
+      } else if (priceFilter === "over-50m") {
+        result = result.filter(p => p.price > 50000000);
+      } else if (priceFilter === "quote") {
+        result = result.filter(p => !p.price || p.price === 0);
+      }
+    }
+
+    // Sorting logic
+    if (sortBy === "price-asc") {
+      result.sort((a, b) => {
+        const pA = a.price || 0;
+        const pB = b.price || 0;
+        if (pA === 0) return 1; // Put contact/no price products at the end
+        if (pB === 0) return -1;
+        return pA - pB;
+      });
+    } else if (sortBy === "price-desc") {
+      result.sort((a, b) => {
+        const pA = a.price || 0;
+        const pB = b.price || 0;
+        if (pA === 0) return 1;
+        if (pB === 0) return -1;
+        return pB - pA;
+      });
+    } else if (sortBy === "name-asc") {
+      result.sort((a, b) => a.name.localeCompare(b.name, "vi"));
+    }
+
     return result;
   };
 
@@ -798,6 +838,39 @@ export default function App() {
                   </ul>
                 </div>
 
+                {/* Bộ lọc theo mức giá */}
+                <div className="bg-beige-paper/50 border border-beige-dark/50 p-5 rounded-sm">
+                  <h4 className="font-serif font-bold text-base text-stone-charcoal border-b border-beige-dark pb-3 mb-4 flex items-center gap-2">
+                    <Tag className="w-4 h-4 text-clay" /> Khoảng giá chế tác
+                  </h4>
+                  <ul className="space-y-2">
+                    {[
+                      { id: "all", label: "Tất cả mức giá" },
+                      { id: "under-10m", label: "Dưới 10 triệu" },
+                      { id: "10m-20m", label: "10 triệu - 20 triệu" },
+                      { id: "20m-50m", label: "20 triệu - 50 triệu" },
+                      { id: "over-50m", label: "Trên 50 triệu" },
+                      { id: "quote", label: "Liên hệ báo giá" },
+                    ].map((range) => (
+                      <li key={range.id}>
+                        <button
+                          onClick={() => setPriceFilter(range.id)}
+                          className={`w-full text-left text-xs py-1.5 px-2.5 rounded-xs transition-all flex items-center justify-between ${
+                            priceFilter === range.id
+                              ? "bg-clay text-beige font-semibold"
+                              : "text-stone-charcoal/85 hover:bg-beige-paper"
+                          }`}
+                        >
+                          <span>{range.label}</span>
+                          {priceFilter === range.id && (
+                            <span className="w-1.5 h-1.5 bg-beige rounded-full"></span>
+                          )}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
                 <div className="bg-clay-light/40 border border-clay/10 p-5 rounded-sm">
                   <h4 className="font-serif font-bold text-sm text-clay-dark mb-2">Hỗ Trợ Thiết Kế 2D</h4>
                   <p className="text-xs text-stone-charcoal/80 font-sans leading-relaxed">
@@ -814,6 +887,26 @@ export default function App() {
 
               {/* Products Display list */}
               <div className="lg:col-span-9">
+                {/* Header bar with count and sorting */}
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-beige-paper/40 border border-beige-dark/30 px-4 py-3 rounded-sm mb-6 gap-3">
+                  <div className="text-xs text-stone-charcoal/80 font-medium">
+                    Hiển thị <span className="font-bold text-clay">{getFilteredProducts().length}</span> sản phẩm phù hợp
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-stone-charcoal/60">Sắp xếp:</span>
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="bg-white border border-beige-dark/70 text-xs py-1 px-2 focus:outline-none focus:border-clay rounded-xs text-stone-charcoal"
+                    >
+                      <option value="default">Mặc định</option>
+                      <option value="price-asc">Giá: Thấp đến Cao</option>
+                      <option value="price-desc">Giá: Cao đến Thấp</option>
+                      <option value="name-asc">Tên sản phẩm: A - Z</option>
+                    </select>
+                  </div>
+                </div>
+
                 {getFilteredProducts().length === 0 ? (
                   <div className="text-center py-16 bg-beige-paper/30 border border-beige-dark/30 rounded-sm">
                     <Search className="w-12 h-12 text-stone-charcoal/30 mx-auto mb-3" />
@@ -823,6 +916,8 @@ export default function App() {
                       onClick={() => {
                         setSearchQuery("");
                         setSelectedCategory("all");
+                        setPriceFilter("all");
+                        setSortBy("default");
                         navigate({ type: "products" });
                         setActiveCategory(null);
                       }}

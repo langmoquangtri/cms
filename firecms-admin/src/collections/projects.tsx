@@ -1,4 +1,5 @@
 import { buildCollection } from "@firecms/core";
+import { projectPreviewView } from "./previews/LivePreview";
 
 export type Project = {
   name: string;
@@ -155,4 +156,5 @@ export const projectsCollection = buildCollection<Project>({
       autoValue: "on_update",
     },
   },
+  views: [projectPreviewView],
 });
