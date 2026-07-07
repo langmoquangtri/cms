@@ -1,63 +1,29 @@
----
-name: analyze-repo
-description: Analyze the current repository architecture and state without modifying files. Use for understanding an unfamiliar codebase or planning major work.
-argument-hint: "[optional focus area]"
-disable-model-invocation: true
----
+# Skill: analyze-repo
 
-# Analyze Repository
+Use this skill only when repository structure or architecture must be understood before implementation.
 
-Perform a read-only repository analysis.
+## Goal
+Build the smallest accurate map needed for the current task.
 
-Focus request:
+## Workflow
+1. Read `CLAUDE.md`.
+2. Inspect only files relevant to the task.
+3. Find:
+   - entry points
+   - affected modules
+   - data flow
+   - schemas/types
+   - relevant package scripts
+4. Search for existing implementations before proposing new ones.
+5. Report briefly:
+   - architecture found
+   - affected files
+   - likely risks
+   - recommended next step
 
-$ARGUMENTS
-
-If no focus request is provided, analyze the repository broadly.
-
-## Process
-
-1. Inspect the repository structure.
-2. Read relevant package manifests and workspace configuration.
-3. Identify applications, packages, workers, services, and entry points.
-4. Inspect relevant configuration files.
-5. Trace major data flows and external integrations.
-6. Distinguish verified facts from inference.
-7. Identify incomplete areas, risks, and unknowns.
-
-For this CMS repository, pay particular attention when present to:
-
-- FireCMS
-- Firebase initialization
-- Authentication
-- Firestore collections
-- Firestore security rules
-- Cloudflare R2
-- Upload workers
-- environment variables
-- frontend entry points
-- build scripts
-- deploy scripts
-
-## Output
-
-Report:
-
-1. Architecture summary
-2. Main components
-3. Entry points
-4. Data flow
-5. External integrations
-6. Confirmed findings
-7. Risks or incomplete areas
-8. Unknowns requiring verification
-9. Recommended next step
-
-## Restrictions
-
-- Do not edit files.
-- Do not install packages.
-- Do not refactor.
-- Do not run destructive commands.
-- Do not commit, push, or deploy.
-- Do not present guesses as facts.
+## Rules
+- Do not audit the entire repo unless necessary.
+- Do not refactor during analysis.
+- Do not read unrelated directories.
+- Prefer targeted searches over broad scans.
+- Stop once enough context exists to implement safely.
