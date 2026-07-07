@@ -1,0 +1,15 @@
+[debug] [2026-07-07T09:50:54.582Z] ----------------------------------------------------------------------
+[debug] [2026-07-07T09:50:54.591Z] Command:       /usr/local/share/nvm/versions/node/v24.14.0/bin/node /home/codespace/nvm/current/bin/firebase login:ci
+[debug] [2026-07-07T09:50:54.592Z] CLI Version:   15.22.4
+[debug] [2026-07-07T09:50:54.592Z] Platform:      linux
+[debug] [2026-07-07T09:50:54.592Z] Node Version:  v24.14.0
+[debug] [2026-07-07T09:50:54.592Z] Detected Agent: unknown
+[debug] [2026-07-07T09:50:54.592Z] Time:          Tue Jul 07 2026 09:50:54 GMT+0000 (Coordinated Universal Time)
+[debug] [2026-07-07T09:50:54.592Z] ----------------------------------------------------------------------
+[debug] 
+[warn] ⚠  Authenticating with a `login:ci` token is deprecated and will be removed in a future major version of `firebase-tools`. Instead, use a service account key with `GOOGLE_APPLICATION_CREDENTIALS`: https://cloud.google.com/docs/authentication/getting-started 
+[info] 
+[info] Visit this URL on this device to log in:
+[info] https://accounts.google.com/o/oauth2/auth?client_id=563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com&scope=email%20openid%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcloudplatformprojects.readonly%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffirebase%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcloud-platform&response_type=code&state=64570993&redirect_uri=http%3A%2F%2Flocalhost%3A9005
+[info] 
+[info] Waiting for authentication...
