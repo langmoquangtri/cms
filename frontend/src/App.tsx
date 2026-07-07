@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import Header from "./components/Header";
 import { Banner, Category, Product, Project, Post, ViewType } from "./types";
+import { getBanners, getCategories, getProducts, getProjects, getPosts, saveContactMessage } from "./lib/firebase";
 
 function parseLocation(): ViewType {
   const path = window.location.pathname;
@@ -122,39 +123,24 @@ export default function App() {
     const fetchBaseData = async () => {
       try {
         setLoading(true);
-        // Fetch Homepage Data
-        const hpRes = await fetch("/api/homepage");
-        if (!hpRes.ok) throw new Error("Không thể tải thông tin trang chủ");
-        const hpData = await hpRes.json();
-        setHomepageData(hpData);
+        const bannersData = await getBanners();
+        const categoriesData = await getCategories();
+        const projectsData = await getProjects();
+        const postsData = await getPosts();
+        const productsData = await getProducts(categoriesData);
 
-        // Fetch Categories
-        const catRes = await fetch("/api/categories");
-        if (catRes.ok) {
-          const catData = await catRes.json();
-          setCategories(catData);
-        }
+        setHomepageData({
+          banners: bannersData,
+          categories: categoriesData,
+          products: productsData.filter(p => p.isFeatured),
+          projects: projectsData,
+          posts: postsData.slice(0, 3)
+        });
 
-        // Fetch All Products
-        const prodRes = await fetch("/api/products");
-        if (prodRes.ok) {
-          const prodData = await prodRes.json();
-          setAllProducts(prodData);
-        }
-
-        // Fetch Projects
-        const projRes = await fetch("/api/projects");
-        if (projRes.ok) {
-          const projData = await projRes.json();
-          setProjects(projData);
-        }
-
-        // Fetch Posts
-        const postRes = await fetch("/api/posts");
-        if (postRes.ok) {
-          const postData = await postRes.json();
-          setPosts(postData);
-        }
+        setCategories(categoriesData);
+        setAllProducts(productsData);
+        setProjects(projectsData);
+        setPosts(postsData);
 
         setError(null);
       } catch (err: any) {
@@ -197,11 +183,10 @@ export default function App() {
     const fetchDetailData = async () => {
       if (currentView.type === "product-detail") {
         try {
-          const res = await fetch(`/api/products/${currentView.slug}`);
-          if (res.ok) {
-            const data = await res.json();
-            setActiveProduct(data);
-            setContactProduct(data.slug);
+          const product = allProducts.find(p => p.slug === currentView.slug);
+          if (product) {
+            setActiveProduct(product);
+            setContactProduct(product.slug);
           } else {
             setActiveProduct(null);
           }
@@ -210,10 +195,9 @@ export default function App() {
         }
       } else if (currentView.type === "project-detail") {
         try {
-          const res = await fetch(`/api/projects/${currentView.slug}`);
-          if (res.ok) {
-            const data = await res.json();
-            setActiveProject(data);
+          const project = projects.find(p => p.slug === currentView.slug);
+          if (project) {
+            setActiveProject(project);
           } else {
             setActiveProject(null);
           }
@@ -222,10 +206,9 @@ export default function App() {
         }
       } else if (currentView.type === "post-detail") {
         try {
-          const res = await fetch(`/api/posts/${currentView.slug}`);
-          if (res.ok) {
-            const data = await res.json();
-            setActivePost(data);
+          const post = posts.find(p => p.slug === currentView.slug);
+          if (post) {
+            setActivePost(post);
           } else {
             setActivePost(null);
           }
@@ -234,10 +217,9 @@ export default function App() {
         }
       } else if (currentView.type === "products" && currentView.categorySlug) {
         try {
-          const res = await fetch(`/api/categories/${currentView.categorySlug}`);
-          if (res.ok) {
-            const data = await res.json();
-            setActiveCategory(data.category);
+          const category = categories.find(c => c.slug === currentView.categorySlug);
+          if (category) {
+            setActiveCategory(category);
             setSelectedCategory(currentView.categorySlug);
           }
         } catch (e) {
@@ -255,7 +237,7 @@ export default function App() {
     };
 
     fetchDetailData();
-  }, [currentView]);
+  }, [currentView, allProducts, categories, projects, posts]);
 
   // Submit Contact Form
   const handleContactSubmit = async (e: React.FormEvent) => {
@@ -270,30 +252,21 @@ export default function App() {
       setFormSuccessMsg("");
       setFormErrorMsg("");
 
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: contactName,
-          phone: contactPhone,
-          email: contactEmail,
-          productSlug: contactProduct,
-          message: contactMessage
-        })
+      await saveContactMessage({
+        name: contactName,
+        phone: contactPhone,
+        email: contactEmail || "",
+        productSlug: contactProduct || "",
+        message: contactMessage || ""
       });
 
-      const data = await res.json();
-      if (res.ok && data.success) {
-        setFormSuccessMsg(data.message);
-        // Clear form
-        setContactName("");
-        setContactPhone("");
-        setContactEmail("");
-        setContactMessage("");
-        setContactProduct("");
-      } else {
-        setFormErrorMsg(data.error || "Có lỗi xảy ra, vui lòng liên hệ trực tiếp qua hotline.");
-      }
+      setFormSuccessMsg("Gửi lời nhắn thành công! Đội ngũ nghệ nhân Bia Mộ Đá Mỹ Nghệ sẽ liên hệ với quý khách trong vòng 1 giờ làm việc.");
+      // Clear form
+      setContactName("");
+      setContactPhone("");
+      setContactEmail("");
+      setContactMessage("");
+      setContactProduct("");
     } catch (err) {
       setFormErrorMsg("Lỗi kết nối. Quý khách vui lòng gọi Hotline 0987.654.321 để được giải đáp ngay lập tức.");
     } finally {
