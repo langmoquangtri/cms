@@ -6,7 +6,7 @@
     "build:admin": "cd firecms-admin && yarn install && yarn build",
     "deploy:frontend": "npm run build:frontend && firebase deploy --only hosting:lang-mo-cms",
     "deploy:admin": "npm run build:admin && firebase deploy --only hosting:lang-mo-cms-admin",
-   "deploy:rules": "firebase deploy --only firestore:rules",
+    "deploy:rules": "firebase deploy --only firestore:rules",
     "deploy:all": "npm run build:frontend && npm run build:admin && firebase deploy"
   }
 }
