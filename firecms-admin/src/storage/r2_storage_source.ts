@@ -1,3 +1,10 @@
+import { FirebaseApp } from "firebase/app";
+import {
+  addDoc,
+  collection,
+  getFirestore,
+  serverTimestamp,
+} from "firebase/firestore";
 import {
   DownloadConfig,
   StorageListResult,
@@ -10,6 +17,8 @@ export type R2StorageSourceProps = {
   apiBaseUrl: string;
   publicBaseUrl: string;
   getAuthToken: () => Promise<string>;
+  firebaseApp: FirebaseApp | undefined;
+  getCurrentUserEmail: () => string | null;
 };
 
 type UploadResponse = {
@@ -47,6 +56,8 @@ export function buildR2StorageSource({
   apiBaseUrl,
   publicBaseUrl,
   getAuthToken,
+  firebaseApp,
+  getCurrentUserEmail,
 }: R2StorageSourceProps): StorageSource {
   const apiBase = trimTrailingSlash(apiBaseUrl);
   const publicBase = trimTrailingSlash(publicBaseUrl);
@@ -108,6 +119,25 @@ export function buildR2StorageSource({
         throw new Error("R2 upload API không trả về path hợp lệ.");
       }
 
+      const uploadResponse = payload as UploadResponse;
+
+      if (firebaseApp) {
+        try {
+          await addDoc(collection(getFirestore(firebaseApp), "media"), {
+            fileName: fileName ?? file.name,
+            path: uploadResponse.path,
+            url:
+              uploadResponse.publicUrl ?? buildPublicUrl(uploadResponse.path),
+            mimeType: file.type || "application/octet-stream",
+            size: file.size,
+            uploadedBy: getCurrentUserEmail() ?? "",
+            created_at: serverTimestamp(),
+          });
+        } catch (error) {
+          console.error("Không ghi được metadata media vào Firestore:", error);
+        }
+      }
+
       return {
         path: payload.path,
         bucket: bucket ?? "r2",
@@ -162,8 +192,18 @@ export function buildR2StorageSource({
       }
     },
 
-    async deleteFile(_path: string, _bucket?: string): Promise<void> {
-      throw new Error("Worker R2 chưa hỗ trợ xoá file.");
+    async deleteFile(path: string, _bucket?: string): Promise<void> {
+      const response = await fetch(
+        `${apiBase}/file?path=${encodeURIComponent(path)}`,
+        {
+          method: "DELETE",
+          headers: await authHeaders(),
+        }
+      );
+
+      if (!response.ok && response.status !== 404) {
+        throw new Error(`Không xoá được file R2. HTTP ${response.status}`);
+      }
     },
 
     async list(

@@ -1,5 +1,11 @@
 import { buildCollection, EntityReference } from "@firecms/core";
 import { productPreviewView } from "./previews/LivePreview";
+import { MediaPickerField } from "./fields/MediaPickerField";
+
+export type ProductSpecification = {
+  label: string;
+  value: string;
+};
 
 export type Product = {
   name: string;
@@ -11,8 +17,11 @@ export type Product = {
   reference_price?: number;
   material: string;
   dimensions: string;
+  specifications?: ProductSpecification[];
   short_description: string;
   content: string;
+  video_url?: string;
+  supplementary_images?: string[];
   status: "draft" | "published" | "hidden";
   featured: boolean;
   sort_order: number;
@@ -48,7 +57,7 @@ export const productsCollection = buildCollection<Product>({
       name: "Slug",
       dataType: "string",
       description: "Ví dụ: lang-mo-da-xanh-thanh-hoa",
-      validation: { required: true },
+      validation: { required: true, unique: true },
       columnWidth: 260,
     },
 
@@ -111,6 +120,27 @@ export const productsCollection = buildCollection<Product>({
       columnWidth: 180,
     },
 
+    specifications: {
+      name: "Thông số kỹ thuật",
+      dataType: "array",
+      description: "Thêm các thông số kỹ thuật dạng nhãn/giá trị",
+      of: {
+        dataType: "map",
+        properties: {
+          label: {
+            name: "Tên thông số",
+            dataType: "string",
+            validation: { required: true },
+          },
+          value: {
+            name: "Giá trị",
+            dataType: "string",
+            validation: { required: true },
+          },
+        },
+      },
+    },
+
     short_description: {
       name: "Mô tả ngắn",
       dataType: "string",
@@ -123,6 +153,25 @@ export const productsCollection = buildCollection<Product>({
       dataType: "string",
       markdown: true,
       description: "Nội dung chi tiết hiển thị trên trang sản phẩm",
+    },
+
+    video_url: {
+      name: "Video YouTube",
+      dataType: "string",
+      description: "Dán link YouTube (watch?v=... hoặc youtu.be/...)",
+      validation: {
+        matches: /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[\w-]{11}/,
+      },
+    },
+
+    supplementary_images: {
+      name: "Ảnh minh họa bổ sung",
+      dataType: "array",
+      description: "Chọn ảnh có sẵn từ Thư viện ảnh để minh họa thêm",
+      of: {
+        dataType: "string",
+      },
+      Field: MediaPickerField,
     },
 
     status: {

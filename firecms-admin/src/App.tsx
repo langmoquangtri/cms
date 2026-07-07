@@ -32,6 +32,7 @@ import { CenteredView } from "@firecms/ui";
 
 import { bannersCollection } from "./collections/banners";
 import { categoriesCollection } from "./collections/categories";
+import { mediaCollection } from "./collections/media";
 import { postsCollection } from "./collections/posts";
 import { productsCollection } from "./collections/products";
 import { projectsCollection } from "./collections/projects";
@@ -59,6 +60,7 @@ function App() {
       projectsCollection,
       postsCollection,
       bannersCollection,
+      mediaCollection,
     ],
     []
   );
@@ -89,8 +91,10 @@ function App() {
         apiBaseUrl: R2_API_BASE_URL ?? "",
         publicBaseUrl: R2_PUBLIC_BASE_URL ?? "",
         getAuthToken: () => authController.getAuthToken(),
+        firebaseApp,
+        getCurrentUserEmail: () => authController.user?.email ?? null,
       }),
-    [authController]
+    [authController, firebaseApp]
   );
 
   const { authLoading, canAccessMainView, notAllowedError } =

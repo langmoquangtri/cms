@@ -52,7 +52,7 @@ function getCorsHeaders(request: Request, env: Env): Record<string, string> {
           Vary: "Origin",
         }
       : {}),
-    "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+    "Access-Control-Allow-Methods": "GET,POST,DELETE,OPTIONS",
     "Access-Control-Allow-Headers": "Authorization,Content-Type",
     "Access-Control-Max-Age": "86400",
   };
@@ -241,6 +241,26 @@ async function handleGetFile(
   });
 }
 
+async function handleDeleteFile(
+  request: Request,
+  env: Env,
+  corsHeaders: Record<string, string>
+): Promise<Response> {
+  const userOrResponse = await requireUser(request, env, corsHeaders);
+  if (userOrResponse instanceof Response) return userOrResponse;
+
+  const url = new URL(request.url);
+  const path = url.searchParams.get("path");
+
+  if (!path) {
+    return json({ error: "Thiếu query path." }, 400, corsHeaders);
+  }
+
+  await env.IMAGES.delete(path);
+
+  return json({ ok: true }, 200, corsHeaders);
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const corsHeaders = getCorsHeaders(request, env);
@@ -273,6 +293,10 @@ export default {
 
       if (request.method === "GET" && url.pathname === "/file") {
         return await handleGetFile(request, env, corsHeaders);
+      }
+
+      if (request.method === "DELETE" && url.pathname === "/file") {
+        return await handleDeleteFile(request, env, corsHeaders);
       }
 
       return json({ error: "Not found" }, 404, corsHeaders);
