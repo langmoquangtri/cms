@@ -28,6 +28,9 @@ jobs:
           cd firecms-admin
           yarn install
           yarn build
+        env:
+          VITE_R2_API_BASE_URL: ${{ secrets.VITE_R2_API_BASE_URL }}
+          VITE_R2_PUBLIC_BASE_URL: ${{ secrets.VITE_R2_PUBLIC_BASE_URL }}
 
       - name: Deploy to Firebase Hosting
         uses: w9jds/firebase-action@master
