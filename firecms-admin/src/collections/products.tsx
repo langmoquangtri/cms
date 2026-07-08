@@ -1,7 +1,6 @@
 import { buildCollection, EntityReference } from "@firecms/core";
 import { productPreviewView } from "./previews/LivePreview";
 import { MediaPickerField } from "./fields/MediaPickerField";
-import { ProductCSVImport } from "./components/ProductCSVImport";
 
 export type ProductSpecification = {
   label: string;
@@ -38,7 +37,6 @@ export const productsCollection = buildCollection<Product>({
   id: "products",
   path: "products",
   group: "Nội dung website",
-  Actions: ProductCSVImport,
 
   permissions: () => ({
     read: true,

@@ -100,12 +100,6 @@ export default function App() {
   
   // Detail views state
   const [activeProduct, setActiveProduct] = useState<Product | null>(null);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  
-  useEffect(() => {
-    setSelectedImage(null);
-  }, [activeProduct?.id]);
-
   const [activeProject, setActiveProject] = useState<Project | null>(null);
   const [activePost, setActivePost] = useState<Post | null>(null);
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
@@ -115,7 +109,6 @@ export default function App() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [priceFilter, setPriceFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("default");
-  const [showFiltersMobile, setShowFiltersMobile] = useState(false);
 
   // Contact Form State
   const [contactName, setContactName] = useState("");
@@ -301,11 +294,11 @@ export default function App() {
 
   const getCategoryIcon = (iconName: string) => {
     switch (iconName) {
-      case "Layers": return <Layers className="w-6 h-6 text-deep-navy" />;
-      case "Feather": return <Feather className="w-6 h-6 text-deep-navy" />;
-      case "Castle": return <Castle className="w-6 h-6 text-deep-navy" />;
-      case "Award": return <Award className="w-6 h-6 text-deep-navy" />;
-      default: return <Sliders className="w-6 h-6 text-deep-navy" />;
+      case "Layers": return <Layers className="w-6 h-6 text-clay" />;
+      case "Feather": return <Feather className="w-6 h-6 text-clay" />;
+      case "Castle": return <Castle className="w-6 h-6 text-clay" />;
+      case "Award": return <Award className="w-6 h-6 text-clay" />;
+      default: return <Sliders className="w-6 h-6 text-clay" />;
     }
   };
 
@@ -406,101 +399,76 @@ export default function App() {
         {currentView.type === "home" && homepageData && (
           <div>
             {/* Elegant Hero Slider Banner */}
-            <section className="relative min-h-[600px] md:h-[680px] flex items-center overflow-hidden bg-cream bg-carving-pattern border-b border-deep-navy/15">
+            <section className="relative min-h-[500px] md:h-[600px] flex items-center overflow-hidden bg-beige-paper border-b border-beige-dark/50">
               {homepageData.banners.map((banner, idx) => (
                 <div 
                   key={banner.id}
-                  className={`absolute inset-0 transition-opacity duration-[1200ms] ease-in-out flex flex-col md:flex-row ${
+                  className={`absolute inset-0 transition-opacity duration-1000 ease-in-out flex flex-col md:flex-row ${
                     idx === activeBannerIdx ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
                   }`}
                 >
-                  {/* Left Column: Text Info (Asymmetric Museum Editorial) */}
-                  <div className="w-full md:w-5/12 flex flex-col justify-center px-6 sm:px-12 lg:px-20 py-16 md:py-0 z-10 bg-light-cream md:border-r border-deep-navy/10 relative">
-                    
-                    {/* Architectural numbering/category header */}
-                    <div className="flex items-center gap-3 mb-6">
-                      <span className="text-[10px] font-mono tracking-[0.35em] text-deep-navy/40 uppercase">COLLECTION</span>
-                      <span className="w-10 h-[1px] bg-deep-navy/15"></span>
-                      <span className="text-[11px] font-mono tracking-widest text-deep-navy/60 font-bold">0{idx + 1} / DI SẢN</span>
-                    </div>
-
+                  {/* Left Column: Text Info */}
+                  <div className="w-full md:w-1/2 flex flex-col justify-center px-6 sm:px-12 lg:px-20 py-12 md:py-0 z-10">
                     {banner.badge && (
-                      <span className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.25em] mb-4 text-red-clay font-bold font-mono">
-                        <Sparkles className="w-3.5 h-3.5 text-soft-blue animate-pulse" />
+                      <span className="text-xs uppercase tracking-[0.25em] mb-3 text-clay font-semibold font-mono flex items-center gap-1.5">
+                        <Sparkles className="w-4 h-4 text-bronze animate-pulse" />
                         {banner.badge}
                       </span>
                     )}
-
-                    <h2 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-extrabold text-deep-navy uppercase tracking-tight leading-[1.05] mb-5">
-                      {banner.title.split(" - ")[0]}
-                      <span className="block text-red-clay text-2xl sm:text-3xl lg:text-4xl mt-2 font-serif font-semibold tracking-wide capitalize italic">
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-stone-charcoal leading-[1.15] mb-4">
+                      {banner.title.split(" - ")[0]} <br className="hidden lg:block"/>
+                      <span className="text-clay italic">
                         {banner.title.split(" - ")[1] || "Vĩnh Cửu Với Thời Gian"}
                       </span>
                     </h2>
-
-                    <div className="w-16 h-[1.5px] bg-red-clay mb-6"></div>
-
-                    <p className="text-[13px] sm:text-sm text-charcoal/80 mb-8 max-w-md font-sans leading-relaxed">
+                    <p className="text-sm sm:text-base text-stone-charcoal/80 mb-8 max-w-xl font-sans leading-relaxed">
                       {banner.subtitle}
                     </p>
-
                     <div className="flex flex-wrap gap-4">
                       <button 
                         onClick={() => navigate({ type: "products" })}
-                        className="px-6 py-3.5 bg-deep-navy hover:bg-dark-navy text-cream text-[11px] font-bold uppercase tracking-widest transition-all rounded-none border border-soft-blue/25 flex items-center gap-2"
+                        className="px-6 py-3 bg-clay hover:bg-clay-dark text-white text-xs font-semibold uppercase tracking-widest transition-all rounded-sm shadow-md flex items-center gap-2"
                       >
                         {banner.ctaText}
-                        <ChevronRight className="w-4 h-4 text-muted-pink" />
+                        <ChevronRight className="w-4 h-4" />
                       </button>
                       <button 
                         onClick={() => navigate({ type: "contact" })}
-                        className="px-6 py-3.5 border border-deep-navy/30 text-deep-navy hover:bg-cream text-[11px] font-bold uppercase tracking-widest transition-all rounded-none font-sans"
+                        className="px-6 py-3 border border-clay text-clay hover:bg-clay-light text-xs font-semibold uppercase tracking-widest transition-all rounded-sm"
                       >
                         Nhận Bản Vẽ Thiết Kế 2D
                       </button>
                     </div>
-
-                    {/* Exhibition details side label - subtle styling */}
-                    <div className="absolute left-6 bottom-6 hidden lg:block">
-                      <p className="text-[9px] font-mono tracking-widest text-deep-navy/30 uppercase">AN GIANG STONE CRAFTSMANSHIP / SINCE 1996</p>
-                    </div>
                   </div>
 
-                  {/* Right Column: Visual Frame (Asymmetric scale and contrast) */}
-                  <div className="w-full md:w-7/12 relative min-h-[300px] md:min-h-full bg-dark-navy">
+                  {/* Right Column: Visual Frame */}
+                  <div className="w-full md:w-1/2 relative min-h-[250px] md:min-h-full bg-stone-100">
                     <div 
-                      className="absolute inset-0 bg-cover bg-center transition-transform duration-[12000ms] opacity-90"
+                      className="absolute inset-0 bg-cover bg-center transition-transform duration-[8000ms]"
                       style={{ 
                         backgroundImage: `url('${banner.imageUrl}')`,
-                        transform: idx === activeBannerIdx ? "scale(1.04)" : "scale(1.0)",
-                        filter: "contrast(1.02) brightness(0.92) saturate(0.95)"
+                        transform: idx === activeBannerIdx ? "scale(1.05)" : "scale(1.0)"
                       }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-light-cream via-transparent to-transparent opacity-40 md:opacity-95" />
-                    <div className="absolute inset-0 bg-deep-navy/5 mix-blend-multiply" />
+                    <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-beige-paper via-transparent to-transparent opacity-95" />
                     
-                    {/* Ornamental Overlay Pattern with museum precision lines */}
-                    <div className="absolute inset-5 sm:inset-8 border border-white/10 pointer-events-none rounded-none flex items-center justify-center">
-                      <div className="w-[calc(100%-8px)] h-[calc(100%-8px)] border border-cream/5" />
-                    </div>
-
-                    {/* Quick photo tag in bottom right corner */}
-                    <div className="absolute bottom-6 right-8 hidden sm:block bg-dark-navy/80 border border-white/10 px-3 py-1.5 backdrop-blur-xs">
-                      <p className="text-[10px] font-mono tracking-widest text-cream uppercase">TÁC PHẨM THỰC TẾ</p>
+                    {/* Ornamental Overlay Pattern */}
+                    <div className="absolute inset-4 sm:inset-8 border border-white/20 pointer-events-none rounded-xs flex items-center justify-center">
+                      <div className="w-11/12 h-11/12 border border-bronze/10" />
                     </div>
                   </div>
                 </div>
               ))}
 
-              {/* Slider Dots indicators: Elegant thin dashes */}
+              {/* Slider Dots indicators */}
               {homepageData.banners.length > 1 && (
-                <div className="absolute bottom-8 left-1/2 md:left-[20.8%] transform -translate-x-1/2 md:-translate-x-0 z-20 flex gap-3">
+                <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-20 flex gap-2.5">
                   {homepageData.banners.map((_, i) => (
                     <button
                       key={i}
                       onClick={() => setActiveBannerIdx(i)}
-                      className={`h-[2px] transition-all duration-500 rounded-none ${
-                        i === activeBannerIdx ? "w-12 bg-deep-navy" : "w-6 bg-deep-navy/20 hover:bg-deep-navy/40"
+                      className={`w-2.5 h-2.5 rounded-full transition-all ${
+                        i === activeBannerIdx ? "bg-clay scale-125" : "bg-clay/30 hover:bg-clay/60"
                       }`}
                       aria-label={`Go to slide ${i+1}`}
                     />
@@ -551,51 +519,32 @@ export default function App() {
             </section>
 
             {/* Categories Division (Danh mục nổi bật) */}
-            <section className="py-20 px-4 max-w-7xl mx-auto sm:px-6 lg:px-8">
-              <div className="text-center mb-16">
-                <span className="text-xs uppercase tracking-[0.2em] text-red-clay font-bold font-mono">Tác Phẩm Tâm Linh</span>
-                <h3 className="text-3xl sm:text-4xl font-serif font-extrabold mt-2 text-deep-navy uppercase tracking-tight">Danh Mục Sản Phẩm</h3>
-                <div className="w-16 h-[1.5px] bg-red-clay mx-auto mt-4" />
+            <section className="py-16 px-4 max-w-7xl mx-auto sm:px-6 lg:px-8">
+              <div className="text-center mb-12">
+                <span className="text-xs uppercase tracking-[0.2em] text-clay font-semibold">Tác Phẩm Tâm Linh</span>
+                <h3 className="text-2xl sm:text-3xl font-serif font-bold mt-1 text-stone-charcoal">Danh Mục Sản Phẩm</h3>
+                <div className="w-16 h-0.5 bg-clay mx-auto mt-3" />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {homepageData.categories.map((cat) => (
                   <div 
                     key={cat.id}
                     onClick={() => navigate({ type: "products", categorySlug: cat.slug })}
-                    className="group cursor-pointer bg-light-cream border border-deep-navy/10 hover:border-red-clay/35 p-5 rounded-none transition-all duration-500 hover:shadow-xs flex flex-col justify-between text-left"
+                    className="group cursor-pointer bg-beige-paper border border-beige-dark/50 hover:border-clay/50 p-6 rounded-sm transition-all duration-300 hover:shadow-md flex flex-col items-center text-center"
                   >
-                    <div>
-                      {/* Elegant Sharp Editorial Image Frame for CMS Uploaded Images */}
-                      <div className="w-full aspect-[4/3] mb-5 overflow-hidden relative bg-cream border border-deep-navy/5">
-                        {(cat.imageUrl || (cat as any).image) ? (
-                          <img 
-                            src={cat.imageUrl || (cat as any).image} 
-                            alt={cat.name} 
-                            className="w-full h-full object-cover filter brightness-[0.97] contrast-[1.01] group-hover:scale-105 transition-transform duration-[1200ms]"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-deep-navy/5">
-                            {getCategoryIcon(cat.iconName)}
-                          </div>
-                        )}
-                        <div className="absolute inset-0 bg-deep-navy/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                      </div>
-
-                      <h4 className="font-serif font-bold text-base text-deep-navy mb-2 group-hover:text-red-clay transition-colors uppercase tracking-wide">
-                        {cat.name}
-                      </h4>
-                      <p className="text-xs text-charcoal/75 font-sans line-clamp-3 leading-relaxed">
-                        {cat.description}
-                      </p>
+                    <div className="w-14 h-14 rounded-full bg-clay-light flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                      {getCategoryIcon(cat.iconName)}
                     </div>
-                    
-                    <div className="mt-5 pt-3 border-t border-deep-navy/5 flex items-center justify-between">
-                      <span className="text-[10px] font-mono tracking-widest text-red-clay font-bold uppercase">
-                        KHÁM PHÁ →
-                      </span>
-                      <ChevronRight className="w-4 h-4 text-red-clay transform translate-x-0 group-hover:translate-x-1.5 transition-transform duration-300" />
-                    </div>
+                    <h4 className="font-serif font-bold text-base text-stone-charcoal mb-2 group-hover:text-clay transition-colors">
+                      {cat.name}
+                    </h4>
+                    <p className="text-xs text-stone-charcoal/70 font-sans line-clamp-2 leading-relaxed">
+                      {cat.description}
+                    </p>
+                    <span className="text-xs text-clay font-semibold mt-4 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      Xem Mẫu Mã <ChevronRight className="w-3 h-3" />
+                    </span>
                   </div>
                 ))}
               </div>
@@ -861,19 +810,8 @@ export default function App() {
             {/* Main Products Grid Structure */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
               
-              {/* Mobile Filter Toggle Button */}
-              <div className="block lg:hidden col-span-1">
-                <button
-                  onClick={() => setShowFiltersMobile(!showFiltersMobile)}
-                  className="w-full flex items-center justify-center gap-2 bg-clay text-beige py-3 px-4 rounded-sm font-semibold uppercase text-xs tracking-wider transition-colors hover:bg-clay-dark shadow-xs"
-                >
-                  <Sliders className="w-4 h-4" />
-                  {showFiltersMobile ? "Thu gọn bộ lọc" : "Mở bộ lọc & Phân loại"}
-                </button>
-              </div>
-
               {/* Sidebar filter column */}
-              <aside className={`${showFiltersMobile ? "block" : "hidden"} lg:block lg:col-span-3 space-y-6`}>
+              <aside className="lg:col-span-3 space-y-6">
                 <div className="bg-beige-paper/50 border border-beige-dark/50 p-5 rounded-sm">
                   <h4 className="font-serif font-bold text-base text-stone-charcoal border-b border-beige-dark pb-3 mb-4 flex items-center gap-2">
                     <Sliders className="w-4 h-4 text-clay" /> Phân loại dòng đá
@@ -885,7 +823,6 @@ export default function App() {
                           setSelectedCategory("all");
                           navigate({ type: "products" });
                           setActiveCategory(null);
-                          if (window.innerWidth < 1024) setShowFiltersMobile(false);
                         }}
                         className={`w-full text-left text-sm py-1.5 px-2.5 rounded-xs transition-colors ${
                           selectedCategory === "all" 
@@ -902,7 +839,6 @@ export default function App() {
                           onClick={() => {
                             setSelectedCategory(cat.slug);
                             navigate({ type: "products", categorySlug: cat.slug });
-                            if (window.innerWidth < 1024) setShowFiltersMobile(false);
                           }}
                           className={`w-full text-left text-sm py-1.5 px-2.5 rounded-xs transition-colors ${
                             selectedCategory === cat.slug 
@@ -933,10 +869,7 @@ export default function App() {
                     ].map((range) => (
                       <li key={range.id}>
                         <button
-                          onClick={() => {
-                            setPriceFilter(range.id);
-                            if (window.innerWidth < 1024) setShowFiltersMobile(false);
-                          }}
+                          onClick={() => setPriceFilter(range.id)}
                           className={`w-full text-left text-xs py-1.5 px-2.5 rounded-xs transition-all flex items-center justify-between ${
                             priceFilter === range.id
                               ? "bg-clay text-beige font-semibold"
@@ -1009,11 +942,11 @@ export default function App() {
                     </button>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 xs:gap-4 sm:gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {getFilteredProducts().map((prod) => (
                       <div 
                         key={prod.id}
-                        className="bg-beige border border-beige-dark/40 rounded-sm overflow-hidden group hover:shadow-lg transition-all duration-300 flex flex-col h-full"
+                        className="bg-beige border border-beige-dark/40 rounded-sm overflow-hidden group hover:shadow-lg transition-all duration-300"
                       >
                         <div className="relative aspect-[4/3] bg-stone-100 overflow-hidden">
                           <img 
@@ -1026,7 +959,7 @@ export default function App() {
                           </div>
                         </div>
                         
-                        <div className="p-3 sm:p-4 flex flex-col flex-1 justify-between gap-3">
+                        <div className="p-4 flex flex-col h-[210px] justify-between">
                           <div>
                             <div className="flex items-center gap-1 text-bronze mb-1">
                               {[...Array(5)].map((_, i) => (
@@ -1037,24 +970,24 @@ export default function App() {
                             
                             <h4 
                               onClick={() => navigate({ type: "product-detail", slug: prod.slug })}
-                              className="font-serif font-bold text-xs sm:text-sm text-stone-charcoal hover:text-clay transition-colors cursor-pointer line-clamp-2 leading-tight"
+                              className="font-serif font-bold text-sm text-stone-charcoal hover:text-clay transition-colors cursor-pointer line-clamp-2 leading-tight"
                             >
                               {prod.name}
                             </h4>
                             
-                            <p className="text-[11px] sm:text-xs text-stone-charcoal/70 font-sans mt-1 line-clamp-2 leading-relaxed">
+                            <p className="text-xs text-stone-charcoal/70 font-sans mt-1.5 line-clamp-2 leading-relaxed">
                               {prod.shortDescription}
                             </p>
                           </div>
 
-                          <div className="border-t border-beige-dark/40 pt-2 flex flex-col xs:flex-row justify-between items-start xs:items-center mt-auto gap-2">
+                          <div className="border-t border-beige-dark/40 pt-2.5 flex justify-between items-center mt-2">
                             <div>
-                              <span className="text-[9px] uppercase text-stone-charcoal/50 block font-mono leading-none">Giá chỉ từ</span>
-                              <span className="text-xs sm:text-sm font-semibold text-clay leading-tight">{prod.priceStr}</span>
+                              <span className="text-[9px] uppercase text-stone-charcoal/50 block font-mono">Giá chỉ từ</span>
+                              <span className="text-xs sm:text-sm font-semibold text-clay">{prod.priceStr}</span>
                             </div>
                             <button
                               onClick={() => navigate({ type: "product-detail", slug: prod.slug })}
-                              className="w-full xs:w-auto text-center px-2 py-1 bg-beige-paper text-stone-charcoal hover:bg-clay hover:text-white border border-bronze/30 text-[10px] sm:text-[11px] font-semibold transition-all rounded-xs"
+                              className="px-3 py-1 bg-beige-paper text-stone-charcoal hover:bg-clay hover:text-white border border-bronze/30 text-[11px] font-semibold transition-all rounded-xs"
                             >
                               Xem Mẫu
                             </button>
@@ -1103,50 +1036,25 @@ export default function App() {
                     <div className="border border-bronze p-2 rounded-xs bg-beige-paper/50">
                       <div className="aspect-[4/3] bg-stone-100 overflow-hidden relative">
                         <img 
-                          src={selectedImage || activeProduct.imageUrl} 
+                          src={activeProduct.imageUrl} 
                           alt={activeProduct.name} 
-                          className="w-full h-full object-cover transition-all duration-300"
+                          className="w-full h-full object-cover"
                         />
                       </div>
                     </div>
                     <div className="mt-4 grid grid-cols-4 gap-2">
-                      <button 
-                        onClick={() => setSelectedImage(activeProduct.imageUrl)}
-                        className={`aspect-[4/3] bg-stone-200 border cursor-pointer overflow-hidden transition-all duration-300 ${
-                          (!selectedImage || selectedImage === activeProduct.imageUrl)
-                            ? "border-red-clay scale-[1.02] opacity-100 shadow-sm"
-                            : "border-bronze/20 opacity-70 hover:opacity-100"
-                        }`}
-                      >
+                      <div className="aspect-[4/3] bg-stone-200 border border-bronze/20 cursor-pointer overflow-hidden opacity-80 hover:opacity-100">
                         <img src={activeProduct.imageUrl} alt="Detail" className="w-full h-full object-cover" />
-                      </button>
-                      {activeProduct.images && activeProduct.images.length > 0 ? (
-                        activeProduct.images.map((imgUrl, index) => (
-                          <button
-                            key={index}
-                            onClick={() => setSelectedImage(imgUrl)}
-                            className={`aspect-[4/3] bg-stone-200 border cursor-pointer overflow-hidden transition-all duration-300 ${
-                              selectedImage === imgUrl
-                                ? "border-red-clay scale-[1.02] opacity-100 shadow-sm"
-                                : "border-bronze/20 opacity-70 hover:opacity-100"
-                            }`}
-                          >
-                            <img src={imgUrl} alt={`Detail ${index + 1}`} className="w-full h-full object-cover" />
-                          </button>
-                        ))
-                      ) : (
-                        <>
-                          <div className="aspect-[4/3] bg-stone-100 border border-bronze/10 flex items-center justify-center text-[10px] text-stone-charcoal/50 font-serif p-1 text-center">
-                            Phôi Đá Đẹp
-                          </div>
-                          <div className="aspect-[4/3] bg-stone-100 border border-bronze/10 flex items-center justify-center text-[10px] text-stone-charcoal/50 font-serif p-1 text-center">
-                            Mạ Vàng 24K
-                          </div>
-                          <div className="aspect-[4/3] bg-stone-100 border border-bronze/10 flex items-center justify-center text-[10px] text-stone-charcoal/50 font-serif p-1 text-center">
-                            Chuẩn Lỗ Ban
-                          </div>
-                        </>
-                      )}
+                      </div>
+                      <div className="aspect-[4/3] bg-stone-100 border border-bronze/10 flex items-center justify-center text-[10px] text-stone-charcoal/50 font-serif p-1 text-center">
+                        Phôi Đá Đẹp
+                      </div>
+                      <div className="aspect-[4/3] bg-stone-100 border border-bronze/10 flex items-center justify-center text-[10px] text-stone-charcoal/50 font-serif p-1 text-center">
+                        Mạ Vàng 24K
+                      </div>
+                      <div className="aspect-[4/3] bg-stone-100 border border-bronze/10 flex items-center justify-center text-[10px] text-stone-charcoal/50 font-serif p-1 text-center">
+                        Chuẩn Lỗ Ban
+                      </div>
                     </div>
                   </div>
 

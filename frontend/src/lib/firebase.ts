@@ -167,7 +167,6 @@ export async function getProducts(categoriesList: any[]) {
         price: price,
         priceStr: priceStr,
         imageUrl: data.main_image || "https://images.unsplash.com/photo-1590069261209-f8e9b8642343?q=80&w=600&auto=format&fit=crop",
-        images: Array.isArray(data.images) ? data.images : [],
         shortDescription: data.short_description || "",
         description: data.content || "",
         specifications: specs,

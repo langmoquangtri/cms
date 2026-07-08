@@ -31,7 +31,6 @@ export interface Product {
   price: number;
   priceStr: string;
   imageUrl: string;
-  images?: string[];
   shortDescription: string;
   description: string;
   specifications: Specification[];
